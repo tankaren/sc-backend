@@ -63,7 +63,7 @@ mongo.connect(host=os.getenv('MONGO_URI'))
 @application.before_request
 def before_request_func():
     if not request.is_json:
-        return ErrorResponse(reason='Missing JSON in request').reponse
+        return ErrorResponse(reason='Missing JSON in request').response
 
 
 # application.register_blueprint(user_blueprint)
