@@ -13,8 +13,8 @@ import mongoengine as mongo
 
 from models import *
 from flask_utils import OkResponse, ErrorResponse
-from user_blueprint import user_blueprint
-from catalog_blueprint import catalog_blueprint
+# from user_blueprint import user_blueprint
+# from catalog_blueprint import catalog_blueprint
 
 from flask import Flask
 from flask_mail import Mail
