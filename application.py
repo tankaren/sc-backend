@@ -57,8 +57,7 @@ email_verifier = EmailVerifier(
     secret_key=application.config['SECRET_KEY'], 
     password_salt=application.config['SECURITY_PASSWORD_SALT']
 )
-
-CORS(app)
+CORS(application)
 
 mongo.connect(host=os.getenv('MONGO_URI'))
 
