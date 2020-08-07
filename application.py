@@ -20,6 +20,7 @@ from flask import Flask
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_cors import CORS
 
 from flask_utils import EmailVerifier
 
@@ -57,8 +58,9 @@ email_verifier = EmailVerifier(
     password_salt=application.config['SECURITY_PASSWORD_SALT']
 )
 
-mongo.connect(host=os.getenv('MONGO_URI'))
+CORS(app)
 
+mongo.connect(host=os.getenv('MONGO_URI'))
 
 @application.before_request
 def before_request_func():
