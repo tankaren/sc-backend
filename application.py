@@ -71,7 +71,7 @@ def before_request_func():
 # application.register_blueprint(catalog_blueprint)
 
 
-@application.route('/api/future-sign-up', methods=['POST'])
+@application.route('/api/future-sign-up', methods=['POST', 'OPTIONS'])
 def sign_up_future():
     json = request.get_json()
 
