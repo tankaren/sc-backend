@@ -21,8 +21,11 @@ mongo.connect(host=os.getenv('MONGO_URI'))
 
 @application.before_request
 def before_request_func():
-    if request.method != 'OPTIONS' and not request.is_json:
-        raise JsonError(reason='JSON is required!')
+    if not request.is_json:
+        if request.method != 'OPTIONS':
+            raise JsonError(reason='JSON is required!')
+        else:
+            return 'OK'
 
 
 # application.register_blueprint(user_blueprint)
