@@ -1,10 +1,33 @@
 from itsdangerous import URLSafeTimedSerializer
-from flask import jsonify
+from flask import Flask, jsonify
+from flask_json import JsonError
+
+
+class ParamChecker:
+    def __init__(self, json):
+        self.json = json
+
+    def verify_with(self, params):
+        missing_params = []
+        for param in params:
+            if self.json.get(param) is None:
+                missing_params += [param]
+
+        if len(missing_params) > 0:
+            raise JsonError(reason=f'Missing the following parameters: {missing_params}', data={'missing': missing_params})
+        return None
+
 
 class EmailVerifier:
-    def __init__(self, secret_key, password_salt):
-        self.serializer = URLSafeTimedSerializer(secret_key)
-        self.pass_salt = password_salt
+    def __init__(self, app=None):
+        if isinstance(app, Flask):
+            self.init_app(app)
+
+    def init_app(self, app):
+        if isinstance(app, Flask):
+            secret_key = app.config['SECRET_KEY']
+            self.serializer = URLSafeTimedSerializer(secret_key)
+            self.pass_salt = app.config['SECURITY_PASSWORD_SALT']
 
     def generate_token(self, email):
         serializer.dumps(email, salt=self.pass_salt)
@@ -15,31 +38,23 @@ class EmailVerifier:
         except:
             return None
         return email
-        
-
-class OkResponse:
-    def __init__(self, status=200):
-        self.status = status
-
-    @property
-    def response(self):
-        return jsonify({ 'status': 'ok' }), self.status
 
 
-class ErrorResponse:
-    def __init__(self, reason='Unknown', status=400, data=None):
-        self.reason = reason
-        self.status = status
-        self.data = data or None
+class EmailSender:
+    def __init__(self, app):
+        if isinstance(app, Flask):
+            self.init_app(app)
 
-    @property
-    def response(self):
-        response = {
-            'status': 'error',
-            'reason': self.reason
-        }
+    def init_app(self, app):
+        if isinstance(app, Flask):
+            self.sender = app.config['MAIL_DEFAULT_SENDER']
 
-        if self.data is not None:
-            response['data'] = self.data
+    def send(self, recipients, subject, body):
+        msg = Message(
+            subject=subject,
+            recipients=recipients,
+            html=body,
+            sender=self.sender
+        )
 
-        return jsonify(response), self.status
+        mail.send(msg)
